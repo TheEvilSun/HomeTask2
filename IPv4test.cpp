@@ -36,7 +36,7 @@ TEST_CASE("IPv4 address test") {
 TEST_CASE("Parser test") {
     auto ips = IPv4::parse("ips.txt");
     REQUIRE(ips.size() == 4);
-    REQUIRE(ips[0] == IPv4::Address("192.168.0.10"));
+    REQUIRE(ips[0] == IPv4::Address("192.168.0.6"));
     REQUIRE(ips[1] == IPv4::Address{12, 18, 0, 6});
     REQUIRE(ips[2] == IPv4::Address(std::make_tuple(120, 108, 0, 10)));
     REQUIRE(ips[3] == IPv4::Address(0x7f44280a));
