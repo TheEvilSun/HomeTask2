@@ -13,32 +13,33 @@ int main(int argc, char *argv[])
     else {
         auto ips = IPv4::parse(argv[1]);
 
-        std::vector<std::reference_wrapper<IPv4::Address>> sortedIp(ips.begin(), ips.end());
+        using SortVector = std::vector<std::reference_wrapper<IPv4::Address>>;
+        SortVector sortedIp(ips.begin(), ips.end());
         std::sort(sortedIp.begin(), sortedIp.end(), [](const auto& ip1, const auto& ip2){
             return ip1.get().toInt() > ip2.get().toInt();
         });
 
-        auto sortedFirst1 = sortedIp;
-        sortedFirst1.erase(std::remove_if(sortedFirst1.begin(), sortedFirst1.end(), [](const auto& ip){
+        SortVector sortedFirst1;
+        std::remove_copy_if(sortedIp.begin(), sortedIp.end(), std::back_inserter(sortedFirst1), [](const auto& ip){
                                auto firstByte = ip.get().firstByte();
                                return !(firstByte == 1);
-                           }), sortedFirst1.end());
+                           }), sortedFirst1.end();
 
-        auto sortedFirst46Second70 = sortedIp;
-        sortedFirst46Second70.erase(std::remove_if(sortedFirst46Second70.begin(), sortedFirst46Second70.end(), [](const auto& ip){
+        SortVector sortedFirst46Second70;
+        std::remove_copy_if(sortedIp.begin(), sortedIp.end(), std::back_inserter(sortedFirst46Second70), [](const auto& ip){
                                         auto firstByte = ip.get().firstByte();
                                         auto secondByte = ip.get().secondByte();
                                         return !(firstByte == 46 && secondByte == 70);
-                                    }), sortedFirst46Second70.end());
+                                    }), sortedFirst46Second70.end();
 
-        auto sortedAny46 = sortedIp;
-        sortedAny46.erase(std::remove_if(sortedAny46.begin(), sortedAny46.end(), [](const auto& ip){
+        SortVector sortedAny46;
+        std::remove_copy_if(sortedIp.begin(), sortedIp.end(), std::back_inserter(sortedAny46), [](const auto& ip){
                                         auto firstByte = ip.get().firstByte();
                                         auto secondByte = ip.get().secondByte();
                                         auto thirdByte = ip.get().thirdByte();
                                         auto fourthByte = ip.get().fourthByte();
                                         return !(firstByte == 46 || secondByte == 46 || thirdByte == 46 || fourthByte == 46);
-                                    }), sortedAny46.end());
+                                    }), sortedAny46.end();
 
         for(const auto& ip : sortedIp) {
             std::cout << ip.get().toString() << std::endl;
